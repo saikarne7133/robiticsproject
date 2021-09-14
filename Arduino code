@@ -1,0 +1,254 @@
+#include <Wire.h>
+#include <HMC5883.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+ 
+int trigPin1 = 02;
+int echoPin1 = 03;
+
+int trigPin2 = 04;
+int echoPin2 = 05;
+
+int trigPin3 = 06;
+int echoPin3 = 07;
+
+int count = 10;
+
+/*-------definning Outputs------*/
+#define LM1 10       // left motor
+#define LM2 11       // left motor
+#define RM1 12       // right motor
+#define RM2 13       // right motor
+
+int flag = 0;
+
+void forward()
+{  
+    digitalWrite(LM1, HIGH);
+    digitalWrite(LM2, LOW);
+    digitalWrite(RM1, HIGH);
+    digitalWrite(RM2, LOW);
+}
+
+void backward()
+{
+  
+    digitalWrite(LM1, LOW);
+    digitalWrite(LM2, HIGH);
+    digitalWrite(RM1, LOW);
+    digitalWrite(RM2, HIGH);
+}
+
+void left()
+{
+  
+    digitalWrite(LM1, HIGH);
+    digitalWrite(LM2, LOW);
+    digitalWrite(RM1, LOW);
+    digitalWrite(RM2, HIGH);
+}
+
+void right()
+{
+  
+    digitalWrite(LM1, LOW);
+    digitalWrite(LM2, HIGH);
+    digitalWrite(RM1, HIGH);
+    digitalWrite(RM2, LOW);
+}
+
+void rstop()
+{
+  
+    digitalWrite(LM1, LOW);
+    digitalWrite(LM2, LOW);
+    digitalWrite(RM1, LOW);
+    digitalWrite(RM2, LOW);
+}
+
+
+void setup() 
+{
+  Wire.begin();
+  Serial.begin(9600);
+  
+  pinMode(trigPin1, OUTPUT);    //SR04 trig
+  pinMode(echoPin1, INPUT);     //SR04 echo
+  
+  pinMode(trigPin2, OUTPUT);    //SR04 trig
+  pinMode(echoPin2, INPUT);     //SR04 echo
+  
+  pinMode(trigPin3, OUTPUT);    //SR04 trig
+  pinMode(echoPin3, INPUT);     //SR04 echo
+  
+  pinMode(LM1, OUTPUT);
+  pinMode(LM2, OUTPUT);
+  pinMode(RM1, OUTPUT);
+  pinMode(RM2, OUTPUT);
+  
+  hmc.init();
+}
+
+void loop() 
+{
+  int x, y, z;
+  int azimuth;
+  hmc.read(&x, &y, &z,&azimuth);
+  String sc="+";
+
+  get_dist1();
+  get_dist2();
+  get_dist3();
+  
+    count++;
+    
+    String s1=String(targetDistance1);
+    String s2=String(targetDistance2);
+    String s3=String(targetDistance3);
+    String head=String((int)azimuth);
+    String scount= String(count) ;
+    String s=s1+sc+s2+sc+s3+sc+head+sc+scount+sc;
+    Serial.print(s);
+    Serial.println();
+ 
+      
+  get_dist1();
+  get_dist2();
+  get_dist3();
+  
+  if(targetDistance2 < 30)
+  {
+        rstop();
+        delay (160);
+              
+        get_dist1();
+        delay (10);
+        get_dist2();
+        delay (10);
+        get_dist3();
+        delay (10);
+
+        if(targetDistance1 > 30)
+        {
+          left();
+          delay (1600);
+          rstop();
+          delay (160);
+        }
+        
+        else if(targetDistance3 > 30)
+        {
+          right();          
+          delay (1600);
+          rstop();
+          delay (160); 
+
+        }        
+        delay (160);  
+  }        
+      
+  else
+  {
+      forward();
+      cd='f';
+      delay (1000);
+      rstop();
+      delay (160);
+  }
+
+  if(count > 28)
+  {
+    rstop();
+    while(1);
+  }
+  
+  delay(100);
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Matlab code:
+% 
+clear; close all; clc;  
+% Start Here
+COM_Port = getAvailableComPort();
+s = serial(COM_Port,'BaudRate',9600);
+fopen(s)
+disp('Reading...');
+count = 1;
+fopen('data.txt', 'w'); % This portion of code writes the number plate
+while 1
+ard = fscanf(s,'%s')
+C = strsplit(ard,'+');       
+fid = fopen('data.txt', 'a'); % This portion of code writes the number plate
+fprintf(fid,'%s\n',ard);     % to the text file, if executed a notepad file with the    
+
+if(count > 20)    
+    disp('Break...');
+    fclose(s);
+    break;
+end
+count = count+1;
+end
+fid=fopen('data.txt');
+t = textscan(fid,'%f%f%f%f%f', 'Delimiter','+');
+fclose(fid);
+w=t{1};
+x=t{2};
+y=t{3};
+z=t{4};
+q = t{5};
+figure(1)
+%%%%%%%%%%%%%2-D Plot%%%%%%%%%%%%%%%%%%%%%%
+plot(q,w)
+% grid
+hold on
+plot(q,x)
+hold on
+plot(q,y)
+ylim([0 300])
+xlim([0 30])
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%3-D Plot%%%%%%%%%%%%%%%%%%%
+% 
+% plot3(q,w,y)
+% % grid
+% hold on
+% ylim([0 300])
+% xlim([0 30])
+% zlim([0 300])
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+title('\bf Moved Path')
+xlabel('X-Axis')
+ylabel('y-Axis')
