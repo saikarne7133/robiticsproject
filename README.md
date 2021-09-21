@@ -1,3 +1,5 @@
+
+![robot design](https://user-images.githubusercontent.com/61570570/134093942-0923308f-a86f-418d-912c-3fbabe3670fa.JPG)
 # robiticsproject
 DESIGN AND IMPLEMENTATION OF SELF NAVIGATING AUTONOMOUS ROBOT WITH 2D-MAPPING USING ARDUINO
 
