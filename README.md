@@ -1,5 +1,6 @@
 # robiticsproject
 DESIGN AND IMPLEMENTATION OF SELF NAVIGATING AUTONOMOUS ROBOT WITH 2D-MAPPING USING ARDUINO
+
 INTRODUCTION
 1.1	Introduction
 To design a path finding robot with moderate velocity and to map the unknown environment using ARDUINO.  
@@ -17,3 +18,10 @@ The objectives are
 2.	To find the safest path around with arduino by comparing the outputs of various sensors. 
 3.	To transfer the data required to map the surroundings in 2D format by using a Zigbee.
 4.	Using MATLAB software to process the data acquired by Zigbee receiver to obtain        the 2D map in pc/laptop.
+
+
+SOFTWARE DESCRIPTION
+This project is implemented using following software’s:
+•	Arduino IDE compiler - for navigation part
+•	Matlab – for mapping part
+
